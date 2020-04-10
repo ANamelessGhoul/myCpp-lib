@@ -123,8 +123,8 @@ public:
     void operator = (const char*);
     void operator += (const LinkedString&);
     void operator += (const char*);
-    //LinkedString operator + (const LinkedString&);
-    LinkedString operator + (const char*);
+
+    bool operator == (const LinkedString&);
 
     const char* ToCString() const;
     int getLength() const;
@@ -186,37 +186,25 @@ void LinkedString::operator+=(const char* input){
     length += inputLength;
 }
 
-//TODO: Update for segments
-/*
-LinkedString LinkedString::operator+ (const char* input){
+bool LinkedString::operator == (const LinkedString& operand){
+    //if lengths are not the same then strings are not equivalent
+    if(this->length != operand.length)
+        return false;
 
-    int inputLength = 0;
-    for (int i = 0; input[i] != '\0' && i < MAX_LENGTH ; i++)
+    //converting both strings for easy random access
+    const char* operand1 = this->ToCString();
+    const char* operand2 = operand.ToCString();
+
+    //checking every character until different characters are found
+    for (int i = 0; i < this->length; i++)
     {
-        inputLength++;
+        if(operand1[i] != operand2[i]){
+            return false;
+        }
     }
-
-    //+1 for end character
-    char* temp = new char[length + inputLength + 1];
-
-    for (int i = 0; i < length; i++)
-    {
-        temp[i] = cString[i];
-    }
-
-    for (int i = 0; i < inputLength; i++)
-    {
-        temp[i + length] = input[i];
-    }
-
-    temp[length + inputLength] = '\0';
-
-    LinkedString result;
-    result = temp;
     
-    return result;
+    return true;
 }
-*/
 
 const char* LinkedString::ToCString() const {
     if(head == NULL){
