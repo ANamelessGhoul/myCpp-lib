@@ -51,8 +51,10 @@ StringSegment::StringSegment(const char* cString, int index = 0)
 
 StringSegment::~StringSegment()
 {
-    delete segment;
-    delete next;
+    if(segment != NULL)
+        delete[] segment;
+    if(next != NULL)
+        delete next;
 }
 
 const char * StringSegment::ToCString(int length){
@@ -146,7 +148,8 @@ LinkedString::LinkedString(/* args */)
 
 LinkedString::~LinkedString()
 {
-    delete head;
+    if(head != NULL)
+        delete head;
 }
 
 void LinkedString::operator = (const LinkedString& inputString){
