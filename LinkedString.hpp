@@ -125,6 +125,7 @@ public:
     void operator += (const char*);
 
     bool operator == (const LinkedString&);
+    bool operator == (const char*);
 
     const char* ToCString() const;
     int getLength() const;
@@ -203,6 +204,22 @@ bool LinkedString::operator == (const LinkedString& operand){
         }
     }
     
+    return true;
+}
+
+bool LinkedString::operator == (const char* operand){
+    //converting string for easy random access
+    const char* operand1 = this->ToCString();
+
+//checking every character until different characters are found
+    for (int i = 0; i < this->length; i++)
+    {
+        char nextChar = operand[i];
+        if(nextChar == '\0' || operand1[i] != nextChar){
+            return false;
+        }
+    }
+
     return true;
 }
 
