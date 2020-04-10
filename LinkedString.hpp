@@ -8,7 +8,6 @@
 #define NULL 0
 #endif
 
-
 class StringSegment
 {
 public:
@@ -20,6 +19,7 @@ public:
 
     StringSegment* next;
     char* segment;
+    //is Full is only false when segment contains '\0' character
     bool isFull;
 
 private:
@@ -30,6 +30,10 @@ StringSegment::StringSegment(const char* cString, int index = 0)
     isFull = false;
     next = NULL;
     segment = new char[SEGMENT_LENGTH];
+    for (int i = 0; i < SEGMENT_LENGTH; i++){
+        segment[i] = '#';
+    }
+
     for (int i = 0; i < SEGMENT_LENGTH; i++)
     {
         char nextChar = cString[index + i];
@@ -65,39 +69,36 @@ void StringSegment::operator+=(const StringSegment& input){
 
 void StringSegment::operator+=(const char* input){
     StringSegment* traverse = this;
+    //traverse to end of string
     while (traverse->next != NULL)
     {
         traverse = traverse->next;
     }
-
-    if(traverse->isFull){
-        traverse->next = new StringSegment(input);
-    }else
+  
+    
+    int segmentLength = 0;
+    //if segment is not full it must have a null character
+    //count characters up to null character
+    while(traverse->segment[segmentLength] != '\0' && segmentLength < SEGMENT_LENGTH)
     {
-        int segmentLength = 0;
-
-        while(traverse->segment[segmentLength] != '\0' && segmentLength < SEGMENT_LENGTH)
-        {
-            segmentLength++;
-        }
-
-        int freeSpace = SEGMENT_LENGTH - segmentLength;
-
-        int i;
-        for (i = 0; i < freeSpace; i++)
-        {
-            char nextChar = input[i];
-
-            traverse->segment[i + segmentLength] = nextChar;
-            if(nextChar == '\0'){
-                return;
-            }
-        }
-
-        traverse->isFull = true;
-        traverse->next = new StringSegment(input, i);
-        
+        segmentLength++;
     }
+
+    int freeSpace = SEGMENT_LENGTH - segmentLength;
+    int i;
+    for (i = 0; i < freeSpace; i++)
+    {
+        char nextChar = input[i];
+        traverse->segment[i + segmentLength] = nextChar;
+        if(nextChar == '\0'){
+            return;
+        }
+    }
+
+    traverse->isFull = true;
+    traverse->next = new StringSegment(input, i);
+        
+    
     
     
 }
@@ -118,9 +119,9 @@ public:
     int getLength() const;
 
     //move to private
+    StringSegment* head;
 
 private:
-    StringSegment* head;
 
     int length;
     char* cString;
