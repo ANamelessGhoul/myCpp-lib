@@ -220,6 +220,10 @@ bool LinkedString::operator == (const char* operand){
         }
     }
 
+    //first string longer than second or equal length
+    if(operand[length] != '\0')
+        return false;
+
     return true;
 }
 
