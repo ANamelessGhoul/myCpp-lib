@@ -14,15 +14,14 @@ public:
     StringSegment(const char*, int);
     ~StringSegment();
 
-    void operator += (const StringSegment&);
     void operator += (const char*);
 
+    const char * ToCString(int);
+private:
     StringSegment* next;
     char* segment;
     //is Full is only false when segment contains '\0' character
     bool isFull;
-
-private:
 };
 
 StringSegment::StringSegment(const char* cString, int index = 0)
@@ -30,9 +29,12 @@ StringSegment::StringSegment(const char* cString, int index = 0)
     isFull = false;
     next = NULL;
     segment = new char[SEGMENT_LENGTH];
+    /*
+    //initialization to a character for easier debug
     for (int i = 0; i < SEGMENT_LENGTH; i++){
         segment[i] = '#';
     }
+    */
 
     for (int i = 0; i < SEGMENT_LENGTH; i++)
     {
@@ -53,19 +55,28 @@ StringSegment::~StringSegment()
     delete next;
 }
 
-void StringSegment::operator+=(const StringSegment& input){
-    *this += input.segment;
+const char * StringSegment::ToCString(int length){
+    //+1 for null character '\0'
+    char* cString = new char[length + 1];
+    StringSegment* traverse = this;
+    int index = 0;
 
-    if(input.next != NULL){
-        StringSegment* traverse = input.next;
-        while (traverse->next != NULL)
+    while(traverse != 0){
+
+        for (int i = 0; i < SEGMENT_LENGTH; i++)
         {
-            *this += traverse->segment;
-            traverse = traverse->next;
+            char nextChar = traverse->segment[i];
+            cString[(index * SEGMENT_LENGTH) + i] = nextChar;
+            if(nextChar == '\0')
+                break;
         }
+        index++;
+        traverse = traverse->next;
     }
-    
+
+    return cString;
 }
+
 
 void StringSegment::operator+=(const char* input){
     StringSegment* traverse = this;
@@ -119,12 +130,11 @@ public:
     int getLength() const;
 
     //move to private
-    StringSegment* head;
 
 private:
 
+    StringSegment* head;
     int length;
-    char* cString;
 };
 
 LinkedString::LinkedString(/* args */)
@@ -136,7 +146,6 @@ LinkedString::LinkedString(/* args */)
 LinkedString::~LinkedString()
 {
     delete head;
-    delete cString;
 }
 
 void LinkedString::operator = (const LinkedString& inputString){
@@ -159,7 +168,7 @@ void LinkedString::operator = (const char* input){
 
 void LinkedString::operator+=(const LinkedString& input){
     int inputLength = input.getLength();
-    *this->head += *input.head;
+    *this->head += input.ToCString();
 
 
     length += inputLength;
@@ -178,6 +187,7 @@ void LinkedString::operator+=(const char* input){
 }
 
 //TODO: Update for segments
+/*
 LinkedString LinkedString::operator+ (const char* input){
 
     int inputLength = 0;
@@ -206,32 +216,14 @@ LinkedString LinkedString::operator+ (const char* input){
     
     return result;
 }
+*/
 
 const char* LinkedString::ToCString() const {
-    //+1 for null character '\0'
-    char* cString = new char[length + 1];
-
-    if(head == 0){
+    if(head == NULL){
         return "Error, string not defined";
     }
-
-    StringSegment* traverse = head;
-    int index = 0;
-
-    while(traverse != 0){
-
-        for (int i = 0; i < SEGMENT_LENGTH; i++)
-        {
-            char nextChar = traverse->segment[i];
-            cString[(index * SEGMENT_LENGTH) + i] = nextChar;
-            if(nextChar == '\0')
-                break;
-        }
-        index++;
-        traverse = traverse->next;
-    }
-
-    return cString;
+    
+    return head->ToCString(length);
 }
 
 int LinkedString::getLength() const{
