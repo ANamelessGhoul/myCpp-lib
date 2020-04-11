@@ -110,12 +110,10 @@ template <typename T>
 class GenericNode
 {
 friend class GenericList<T>;
-public:
+private:
     GenericNode(const T&);
     ~GenericNode();
-    //move to private
 
-private:
     T data;
     GenericNode<T>* next;
 };
