@@ -31,7 +31,7 @@ public:
     T& operator[](int);
 
     void Add(const T&);
-    void Remove(const T&);
+    bool Remove(const T&);
     int getLength();
 
 
@@ -74,9 +74,9 @@ T& GenericList<T>::operator[](int index){
 }
 
 template <typename T> 
-void GenericList<T>::Remove(const T& toRemove){
+bool GenericList<T>::Remove(const T& toRemove){
     if(head == NULL){
-        return;
+        return false;
     }
 
     GenericNode<T>* traverse = head;
@@ -87,7 +87,7 @@ void GenericList<T>::Remove(const T& toRemove){
         traverse->next = NULL;
         delete traverse;
         length--;
-        return;
+        return true;
     }
 
     while (traverse != NULL)
@@ -97,12 +97,14 @@ void GenericList<T>::Remove(const T& toRemove){
             traverse->next = NULL;
             delete traverse;
             length--;
-            return;
+            return true;
         }
         tail = traverse;
         traverse = traverse->next;
     }
     
+
+    return false;
 }
 
 template <typename T> 
